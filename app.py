@@ -27,11 +27,19 @@ def get_episode(id):
         return jsonify(episode.to_dict_with_appearances())
     return jsonify({"error": "Episode not found"}), 404
 
+@app.route('/episodes/<int:id>' , methods=['DELETE'])
+def delete_episode(id):
+    episode = Episodes.query.get(id)
+    if episode:
+        db.session.delete(episode)
+        db.session.commit()
+        return jsonify({"message": "Episode deleted"}), 204
+    return jsonify({"error": "Episode not found"}), 404
 
 @app.route('/guests', methods=['GET'])
 def get_guests():
     guests = Guests.query.all()
-    return jsonify([g.to_dict(rules=("-appearances",)) for g in guests])
+    return jsonify([g.to_dict() for g in guests])
 
 @app.route('/appearances', methods=['POST'])
 def create_appearance():
@@ -57,7 +65,7 @@ def create_appearance():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,port=5555)
 
 
 
